@@ -33,6 +33,21 @@
             "serialNumber": "", //If you have more than one J-Link probe, add the serial number here.
             "svdFile": "target/pixhawk/fmu-v2/STM32F427.svd",
             "runToMain": true
+        },
+        {
+            "name": "Saturn Debug J-Link",
+            "type": "cortex-debug",
+            "request": "launch",
+            "cwd": "${workspaceRoot}",
+            "executable": "target/fmt/saturn/build/fmt_saturn.elf",
+            "serverpath": "${env:JLINK_SERVER}",
+            "servertype": "jlink",
+            "device": "STM32F405RG",
+            "interface": "swd",
+            "armToolchainPath": "${env:RTT_EXEC_PATH}",
+            "serialNumber": "", //If you have more than one J-Link probe, add the serial number here.
+            //"svdFile": "target/pixhawk/fmu-v2/STM32F427.svd",
+            "runToMain": true
         }
     ]
 }

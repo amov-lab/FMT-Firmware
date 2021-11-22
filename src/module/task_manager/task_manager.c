@@ -75,6 +75,10 @@ void task_init(void)
     task_table = (fmt_task_desc_t)&__fmt_task_start;
     task_num = (fmt_task_desc_t)&__fmt_task_end - task_table;
 
+    if (task_num == 0) {
+        return;
+    }
+
     task_status = (uint8_t*)rt_malloc(task_num);
     RT_ASSERT(task_status != NULL);
     memset(task_status, TASK_IDLE, task_num);
