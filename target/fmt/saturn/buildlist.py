@@ -7,10 +7,10 @@ DRIVERS = [
 DRIVERS_CPPPATH = []
 
 HAL = [
-    # 'pin/*.c',
+    'pin/*.c',
     'serial/*.c',
     'systick/*.c',
-    # 'usb/usbd_cdc.c'
+    'usb/usbd_cdc.c'
 ]
 
 HAL_CPPPATH = []
@@ -24,7 +24,9 @@ MODULES = [
     'workqueue/*.c',
     'math/*.c',
     'task_manager/*.c',
-    'file_manager/*.c'
+    'file_manager/*.c',
+    'syscmd/syscmd.c',
+    'syscmd/optparse.c'
 ]
 
 MODULES_CPPPATH = [

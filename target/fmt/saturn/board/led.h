@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2020 The Firmament Authors. All Rights Reserved.
+ * Copyright 2021 The Firmament Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *****************************************************************************/
+#ifndef LED_H__
+#define LED_H__
 
-#ifndef FMT_BSP_HEADER_H__
-#define FMT_BSP_HEADER_H__
+#include <firmament.h>
 
-/* stm32 peripheral library */
-#include <stm32f4xx.h>
-/* FPU Library */
-#include <arm_math.h>
+#include "driver/ncp5623c.h"
+#include "hal/pin.h"
 
-#include "stm32f4xx_hal.h"
-#include "stm32f4xx_ll_rcc.h"
-#include "stm32f4xx_ll_bus.h"
-#include "stm32f4xx_ll_system.h"
-#include "stm32f4xx_ll_exti.h"
-#include "stm32f4xx_ll_cortex.h"
-#include "stm32f4xx_ll_utils.h"
-#include "stm32f4xx_ll_pwr.h"
-#include "stm32f4xx_ll_dma.h"
-#include "stm32f4xx_ll_gpio.h"
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+#define LED0_PIN   30
+
+#define LED_ON(_pin)     led_set((struct device_pin_status) { .pin = _pin, .status = 1 })
+#define LED_OFF(_pin)    led_set((struct device_pin_status) { .pin = _pin, .status = 0 })
+#define LED_TOGGLE(_pin) led_toggle(_pin)
+
+fmt_err_t led_control_init(void);
+fmt_err_t led_init(struct device_pin_mode pin_mode);
+fmt_err_t led_set(struct device_pin_status pin_sta);
+fmt_err_t led_toggle(uint32_t pin);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

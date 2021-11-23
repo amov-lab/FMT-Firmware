@@ -1,5 +1,5 @@
 /******************************************************************************
- * Copyright 2020 The Firmament Authors. All Rights Reserved.
+ * Copyright 2021 The Firmament Authors. All Rights Reserved.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,24 +13,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *****************************************************************************/
+#include <firmament.h>
 
-#ifndef FMT_BSP_HEADER_H__
-#define FMT_BSP_HEADER_H__
+#include "module/task_manager/task_manager.h"
 
-/* stm32 peripheral library */
-#include <stm32f4xx.h>
-/* FPU Library */
-#include <arm_math.h>
+fmt_err_t task_local_init(void)
+{
+    return FMT_EOK;
+}
 
-#include "stm32f4xx_hal.h"
-#include "stm32f4xx_ll_rcc.h"
-#include "stm32f4xx_ll_bus.h"
-#include "stm32f4xx_ll_system.h"
-#include "stm32f4xx_ll_exti.h"
-#include "stm32f4xx_ll_cortex.h"
-#include "stm32f4xx_ll_utils.h"
-#include "stm32f4xx_ll_pwr.h"
-#include "stm32f4xx_ll_dma.h"
-#include "stm32f4xx_ll_gpio.h"
+void task_local_entry(void* parameter)
+{
+    printf("Hello FMT!\n");
 
-#endif
+    while (1) {
+        sys_msleep(1000);
+    }
+}
+
+TASK_EXPORT __fmt_task_desc = {
+    .name = "local",
+    .init = task_local_init,
+    .entry = task_local_entry,
+    .priority = 25,
+    .stack_size = 1024,
+    .param = NULL,
+    .dependency = NULL
+};

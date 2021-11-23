@@ -23,7 +23,9 @@
 #include "board_device.h"
 #include "drv_systick.h"
 #include "drv_usart.h"
-// #include "drv_usbd_cdc.h"
+#include "drv_usbd_cdc.h"
+#include "drv_gpio.h"
+#include "led.h"
 
 #include "module/console/console_config.h"
 #include "module/file_manager/file_manager.h"
@@ -49,7 +51,7 @@
 // #define SYS_CONFIG_FILE "/sys/sysconfig.toml"
 
 static const struct dfs_mount_tbl mnt_table[] = {
-    { "sd0", "/", "elm", 0, NULL },
+    // { "sd0", "/", "elm", 0, NULL },
     { NULL } /* NULL indicate the end */
 };
 
@@ -84,6 +86,7 @@ void SystemClock_Config(void)
     while (LL_RCC_HSE_IsReady() != 1) {
     }
     LL_RCC_PLL_ConfigDomain_SYS(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_25, 336, LL_RCC_PLLP_DIV_2);
+    LL_RCC_PLL_ConfigDomain_48M(LL_RCC_PLLSOURCE_HSE, LL_RCC_PLLM_DIV_25, 336, LL_RCC_PLLQ_DIV_7);
     LL_RCC_PLL_Enable();
 
     /* Wait till PLL is ready */
@@ -97,8 +100,12 @@ void SystemClock_Config(void)
     /* Wait till System clock is ready */
     while (LL_RCC_GetSysClkSource() != LL_RCC_SYS_CLKSOURCE_STATUS_PLL) {
     }
-    LL_Init1msTick(168000000);
     LL_SetSystemCoreClock(168000000);
+
+    /* Update the time base */
+    if (HAL_InitTick(TICK_INT_PRIORITY) != HAL_OK) {
+        Error_Handler();
+    }
 }
 
 #define ITEM_LENGTH 42
@@ -143,7 +150,7 @@ void bsp_early_initialize(void)
     rt_system_heap_init((void*)SYSTEM_FREE_MEM_BEGIN, (void*)SYSTEM_FREE_MEM_END);
 
     /* HAL library initialization */
-    // HAL_Init();
+    HAL_Init();
 
     /* System clock initialization */
     SystemClock_Config();
@@ -159,6 +166,9 @@ void bsp_early_initialize(void)
 
     /* system time module init */
     FMT_CHECK(systime_init());
+
+    /* gpio driver init */
+    RT_CHECK(drv_gpio_init());
 
     /* system statistic module */
     FMT_CHECK(sys_stat_init());
@@ -176,7 +186,7 @@ void bsp_initialize(void)
     file_manager_init(mnt_table);
 
     /* init usbd_cdc */
-    // RT_CHECK(drv_usb_cdc_init());
+    RT_CHECK(drv_usb_cdc_init());
 
     /* init finsh */
     finsh_system_init();
@@ -193,6 +203,9 @@ void bsp_post_initialize(void)
     //     __toml_root_tab = toml_parse_config_string(DEFAULT_TOML_SYS_CONFIG);
     // }
     // FMT_CHECK(bsp_parse_toml_sysconfig(__toml_root_tab));
+
+    /* initialize led */
+    FMT_CHECK(led_control_init());
 
     /* show system information */
     bsp_show_information();

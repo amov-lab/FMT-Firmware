@@ -13,24 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *****************************************************************************/
+#include <firmament.h>
 
-#ifndef FMT_BSP_HEADER_H__
-#define FMT_BSP_HEADER_H__
+#include "module/syscmd/syscmd.h"
 
-/* stm32 peripheral library */
-#include <stm32f4xx.h>
-/* FPU Library */
-#include <arm_math.h>
+static int handle_cmd(int argc, char** argv, int optc, optv_t* optv)
+{
+	printf("rebooting...\n");
+	sys_msleep(10);
 
-#include "stm32f4xx_hal.h"
-#include "stm32f4xx_ll_rcc.h"
-#include "stm32f4xx_ll_bus.h"
-#include "stm32f4xx_ll_system.h"
-#include "stm32f4xx_ll_exti.h"
-#include "stm32f4xx_ll_cortex.h"
-#include "stm32f4xx_ll_utils.h"
-#include "stm32f4xx_ll_pwr.h"
-#include "stm32f4xx_ll_dma.h"
-#include "stm32f4xx_ll_gpio.h"
+	NVIC_SystemReset();
 
-#endif
+	return 0;
+}
+
+int cmd_reboot(int argc, char** argv)
+{
+	return syscmd_process(argc, argv, handle_cmd);
+}
+FINSH_FUNCTION_EXPORT_ALIAS(cmd_reboot, __cmd_reboot, reboot the system);
